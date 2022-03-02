@@ -116,7 +116,7 @@
     function calculate() {
         DLYCOP = $("#DLYCOP").val();
         DLYCOP2USDC = DLYCOP /  USDC2DLYCOP;
-        USD2COPBinance = USD2COP - 150;
+        USD2COPBinance = USD2COP - 100;
         resultCOP = USD2COPBinance * DLYCOP2USDC;
         percent = (USD2COPBinance / USDC2DLYCOP - 1) * 100;
         setValues()        
@@ -154,28 +154,18 @@
 
         $.ajax({
             type: "GET",
+            contentType: "application/json",
+            dataType: "json",
             beforeSend: function (request) {
-                request.setRequestHeader("Accepts", "application/json");
-                request.setRequestHeader("X-CMC_PRO_API_KEY", apiKey);
+                request.setRequestHeader("Accept", "application/json");
             },
-            url: urlUSDC2DLYCOP,
+            url: "https://2rpyifs2c9.execute-api.us-east-1.amazonaws.com/test/priceconversion",
             processData: false,
             success: function (response) {
-                USDC2DLYCOP = response.data[0].quote.DLYCOP.price;
+                USDC2DLYCOP = response.USDC2DLYCOP;
+                USD2COP = response.USD2COP;
 
-                $.ajax({
-                    type: "GET",
-                    beforeSend: function (request) {
-                        request.setRequestHeader("Accepts", "application/json");
-                        request.setRequestHeader("X-CMC_PRO_API_KEY", apiKey);
-                    },
-                    url: urlUSD2COP,
-                    processData: false,
-                    success: function (response) {
-                        USD2COP = response.data[0].quote.COP.price;
-                        calculate();
-                    }
-                });
+                calculate();
             }
         });
     }
